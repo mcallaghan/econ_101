@@ -1,0 +1,37 @@
+---
+title: "Profit Maximisation and Competitive Markets"
+author: "Max Callaghan"
+date: "September 29, 2015"
+output: html_document
+---
+
+
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+price <- function(q) {
+  return( 90 - 2*q )
+}
+
+cost <- function(q) {
+  return(100+2*q^2)
+}
+
+market <- data.frame(
+  quantity=c(0:20)
+  ) %>%
+  mutate(
+    price = price(quantity),
+    cost = cost(quantity)
+  )
+
+
+marketNarrow <- market %>%
+gather(variable,value,price:cost)
+
+
+ggplot(marketNarrow,aes(quantity,value,colour=variable)) + geom_line() + ylim(c(-100,200))
+
+

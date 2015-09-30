@@ -4,7 +4,27 @@ date: "September 29, 2015"
 output: html_document
 ---
 
-Using the given functions $P=90-2q$ and $Cost=100+2q^2$ to work out price and total cost. I then multiply price by quantity to get total revenue. I calculate marginal cost and marginal revenue simply as the value for quantity plus one minus the value for quantity $Value_{q+1}-Value_q$. This is what I thought was the intuitive definition of marginal cost or marginal revenue, the additional cost or revenue of producing one more item.
+Price is given by 
+
+$$P=90-2Q$$  
+
+Total cost is given by
+
+$$Cost=100+2Q^2$$
+
+Total revenue is given by
+
+$$Revenue=P*Q=90Q-2Q^2$$
+
+Marginal cost and marginal revenue are calculated by
+
+$$Value_{q+1}-Value_q,$$
+
+that is, the difference between the value at the current quantity and the value for an additional unit of quantity.
+
+Profit is given by
+
+$$Revenue-Cost$$
 
 ```{r message=FALSE,warning=FALSE}
 #load some libraries
@@ -29,15 +49,17 @@ market <- data.frame(
   mutate(
     price = price(quantity),
     cost = cost(quantity),
-    simple_mar_cost = lead(cost)-cost,
-    total_revenue = price*quantity,
-    simple_marginal_revenue = lead(total_revenue)-total_revenue
+    mar_cost = lead(cost)-cost,
+    total_revenue_monopoly = price*quantity,
+    marginal_revenue = lead(total_revenue_monopoly)-total_revenue_monopoly,
+    profit_monopoly = total_revenue_monopoly - cost,
+    average_costs = cost / quantity
     #simple_marginal_revenue = total_revenue-lag(total_revenue)
   )
 
 ```
 
-The marginal values don't correspond with the values we calculated by deriving the equations
+In a table showing quantity from 1 to 20 we can see values for all our variables:
 
 ```{r}
 
@@ -46,14 +68,25 @@ kable(market)
 ```
 
 
-The graph is broadly right but is off by a small amount in the marginal variables
+Here is what we happen when we plot them
 
 ```{r message=FALSE,warning=FALSE}
 #gather the variables into two columns, variable and value
 marketNarrow <- market %>%
-gather(variable,value,price:simple_marginal_revenue)
+gather(variable,value,price:average_costs)
 
 #plot value against quantity, grouping by variable
-ggplot(marketNarrow,aes(quantity,value,colour=variable)) + geom_line() + ylim(c(0,200))
+ggplot(marketNarrow,aes(quantity,value,colour=variable)) + geom_line() 
+
+#remove total revenue and cost for better scale
+ggplot(filter(
+  marketNarrow,variable != "total_revenue_monopoly" & variable != "cost"
+  ), aes(quantity,value,colour=variable)) + geom_line()
+
+ggplot(filter(
+  marketNarrow,variable != "total_revenue_monopoly" & variable != "cost" & variable != "profit_monopoly"
+  ), aes(quantity,value,colour=variable)) + geom_line()
+
+
 
 ```

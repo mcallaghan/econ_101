@@ -4,7 +4,138 @@ date: "September 29, 2015"
 output: html_document
 ---
 
-Price is given by 
+# 1. Taxes and Subsidies
+
+The demand curve is given by
+
+$$Q_{D} = 18 - 2P$$ 
+
+The supply curve is given by
+
+$$Q_{S} = -2 + 8P$$ 
+
+```{r message=FALSE,warning=FALSE}
+
+#load some libraries
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(knitr)
+
+#define the supply and demand functions
+supply <- function(p) {
+  return( -2 + 8*p )
+}
+
+demand <- function(p) {
+  return(18-2*p)
+}
+
+supply_sub <- function(p,t) {
+  return( -2 + 8*(p+t))
+}
+
+demand_sub <- function(p,t) {
+  return(18-2*(p-t))
+}
+
+#create a dataframe with price going from 0 to 10, and calculate the other variables for each q
+market1 <- data.frame(
+  price=c(0:30)*0.1
+  ) %>%
+  mutate(
+    supply = supply(price),
+    demand = demand(price),
+    supply_2 = supply_sub(price,1),
+    demand_2 = demand_sub(price,1)
+  )
+
+market1Narrow <- market1 %>%
+gather(variable,quantity,supply:demand_2)
+
+```
+
+Here's what the market looks like in equilibrium
+
+```{r message=FALSE,warning=FALSE}
+
+#plot value against quantity, grouping by variable
+ggplot(filter(
+  market1Narrow,variable!="demand_2" &variable!="supply_2"
+  ),aes(quantity,price,colour=variable)) + geom_line() +xlim(c(0,30))
+
+```
+
+Here's what the data looks like
+```{r message=FALSE,warning=FALSE}
+kable(market1)
+```
+
+Here's a graphical representation of what happens if we give the subsidy to the supplier
+```{r message=FALSE,warning=FALSE}
+
+#plot value against quantity, grouping by variable
+ggplot(filter(
+  market1Narrow,variable!="demand_2"
+  ),aes(quantity,price,colour=variable)) + geom_line() +xlim(c(0,30))
+
+```
+
+
+Here's a graphical representation of what happens if we give the subsidy to the consumer
+```{r message=FALSE,warning=FALSE}
+
+ggplot(filter(
+  market1Narrow,variable!="supply_2"
+  ),aes(quantity,price,colour=variable)) + geom_line() +xlim(c(0,30))
+
+```
+
+# 2. Profit Maximisation
+
+Suppose that a firm's marginal cost is given by
+
+$$MC(Q) = 3 + 2Q$$
+
+and that price = 0
+
+```{r}
+
+#define the marginal cost function
+marginal_cost <- function(q) {
+  return(3 + 2*q )
+}
+
+#create a market table for the firm
+market2 <- data.frame(
+  quantity=c(0:10)
+  ) %>%
+  mutate(
+    price = 9,
+    marginal_cost = marginal_cost(quantity)
+  )
+
+market2Narrow <- market2 %>%
+gather(variable,value,price:marginal_cost)
+
+```
+
+Here's what the data looks like
+```{r message=FALSE,warning=FALSE}
+kable(market2)
+```
+
+Here's a graphical representation of marginal costs agains price
+```{r message=FALSE,warning=FALSE}
+
+ggplot(market2Narrow,aes(quantity,value,colour=variable)) + geom_line() 
+
+```
+
+
+# 3. Market Power
+
+Suppose that price is given by 
 
 $$P=90-2Q$$  
 
@@ -27,11 +158,6 @@ Profit is given by
 $$Revenue-Cost$$
 
 ```{r message=FALSE,warning=FALSE}
-#load some libraries
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(knitr)
 
 #define the price and cost functions
 price <- function(q) {
@@ -43,7 +169,7 @@ cost <- function(q) {
 }
 
 #create a dataframe with quantity going from 0 to 20, and calculate the other variables for each q
-market <- data.frame(
+market3 <- data.frame(
   quantity=c(0:20)
   ) %>%
   mutate(
@@ -63,7 +189,7 @@ In a table showing quantity from 1 to 20 we can see values for all our variables
 
 ```{r}
 
-kable(market)
+kable(market3)
 
 ```
 
@@ -72,19 +198,19 @@ Here is what we happen when we plot them
 
 ```{r message=FALSE,warning=FALSE}
 #gather the variables into two columns, variable and value
-marketNarrow <- market %>%
+market3Narrow <- market3 %>%
 gather(variable,value,price:average_costs)
 
 #plot value against quantity, grouping by variable
-ggplot(marketNarrow,aes(quantity,value,colour=variable)) + geom_line() 
+ggplot(market3Narrow,aes(quantity,value,colour=variable)) + geom_line() 
 
 #remove total revenue and cost for better scale
 ggplot(filter(
-  marketNarrow,variable != "total_revenue_monopoly" & variable != "cost"
+  market3Narrow,variable != "total_revenue_monopoly" & variable != "cost"
   ), aes(quantity,value,colour=variable)) + geom_line()
 
 ggplot(filter(
-  marketNarrow,variable != "total_revenue_monopoly" & variable != "cost" & variable != "profit_monopoly"
+  market3Narrow,variable != "total_revenue_monopoly" & variable != "cost" & variable != "profit_monopoly"
   ), aes(quantity,value,colour=variable)) + geom_line()
 
 

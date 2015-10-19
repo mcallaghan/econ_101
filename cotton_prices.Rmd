@@ -1,0 +1,53 @@
+---
+title: "Cotton Prices"
+date: "October 19, 2015"
+output: html_document
+---
+
+Suppose that the demand for cotton in the U.S. can be expressed as: QD = 28 – 2P and that the supply can be expressed as: QS = 0.8P, where Q is measured in million bales per year and P is measured in $ per bale. What is the domestic equilibrium price, which quantity is sold? Now suppose a world market price for cotton at $5, if the U.S. were opened to international trade, would the U.S. import or export cotton? How much?
+
+Quantity supplied and quantity demanded are given by
+$$ QS = 0.8P, QD = 28 - 2P $$
+At market equilibrium, the quantity supplied is equal to the quantity demanded:
+$$ 0.8P = 28 - 2P $$
+$[+2P]$
+$$ 2.8P = 28 $$
+$[\div 2.8]$
+$$ P = 10, Q = 8 $$
+
+With $P = 5$, Consumers will demand $28-2(5)=18$, while suppliers will supply $0.8(5)=4$ Imports will be $18-4=14$
+
+#Practical Proof
+```{r message=FALSE}
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(knitr)
+
+supply <- function(p) {
+  return( 0.8*p )
+}
+
+demand <- function(p) {
+  return(28-2*p)
+}
+
+market1 <- data.frame(
+  price=c(0:15)
+  ) %>%
+  mutate(
+    supply = supply(price),
+    demand = demand(price)
+  )
+
+market1Narrow <- market1 %>%
+gather(variable,quantity,supply:demand)
+
+ggplot(market1Narrow,aes(quantity,price,colour=variable)) + geom_line()
+
+kable(market1)
+
+
+```
+

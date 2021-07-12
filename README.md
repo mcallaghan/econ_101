@@ -8,8 +8,8 @@ If you have git installed you can clone the repository to run the files on your 
 
 #Profit Maximisation
 Answers to problems set 3
-[link](https://cdn.rawgit.com/mcallaghan/econ_101/v0002/profit_max.html)
+[link](https://rawcdn.githack.com/mcallaghan/econ_101/v0002/profit_max.html)
 
 #Revision session
 Answer to an import question submitted before the revision session
-[link](https://cdn.rawgit.com/mcallaghan/econ_101/master/cotton_prices.html)
+[link](https://rawcdn.githack.com/mcallaghan/econ_101/master/cotton_prices.html)
